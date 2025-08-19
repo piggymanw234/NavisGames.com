@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Navis Games V3</title>
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      background: #020304;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #ff2b2b;
+      margin-top: 20px;
+      text-shadow:
+        0 0 6px rgba(255, 50, 50, 0.9),
+        0 0 12px rgba(255, 50, 50, 0.8),
+        0 0 24px rgba(255, 50, 50, 0.7);
+      position: relative;
+      z-index: 2;
+    }
+
+    .icon-container {
+      position: absolute;
+      top: 120px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .icon-box {
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      background-color: #ff2b2b;
+      box-shadow:
+        0 0 20px rgba(255, 0, 0, 0.9),
+        0 0 40px rgba(255, 0, 0, 0.8),
+        0 0 60px rgba(255, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .icon-box:hover {
+      transform: scale(1.1);
+    }
+
+    .icon-box img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+    }
+
+    .label {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+      text-shadow:
+        0 0 6px rgba(255, 255, 255, 0.9),
+        0 0 12px rgba(255, 255, 255, 0.8),
+        0 0 24px rgba(255, 255, 255, 0.7);
+    }
+
+    canvas#snow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="snow"></canvas>
+
+  <h1 class="title">Navis Games V3
+
+
+  
+  <div class="icon-container">
+    <!-- Balatro Icon -->
+    <div class="icon-box">
+      <img src="https://cdn2.steamgriddb.com/icon/066e25a0712b306a9b95230f6ec4a051.ico" alt="Balatro Icon">
+    </div>
+    <div class="label">Balatro</div>
+
+    <!-- Geometry Dash Icon -->
+    <div class="icon-box" style="margin-top: 20px;">
+      <img src="https://m.media-amazon.com/images/I/61mVIP6Oo1L.png" alt="Geometry Dash Icon">
+    </div>
+    <div class="label">Geometry Dash</div>
+  </div>
+  
+
+  
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('snow');
+      const ctx = canvas.getContext('2d');
+      let w, h, flakes;
+      const DPR = window.devicePixelRatio || 1;
+      const MAX_FLAKES = 200;
+
+      function resize() {
+        w = canvas.width = window.innerWidth * DPR;
+        h = canvas.height = window.innerHeight * DPR;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        initFlakes();
+      }
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function initFlakes() {
+        flakes = new Array(MAX_FLAKES).fill(0).map(() => ({
+          x: rand(0, w),
+          y: rand(-h, h),
+          r: rand(1 * DPR, 3 * DPR),
+          vy: rand(0.5 * DPR, 1.5 * DPR),
+          vx: rand(-0.5 * DPR, 0.5 * DPR),
+          a: rand(0, Math.PI * 2),
+          va: rand(0.002, 0.008)
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (let f of flakes) {
+          f.a += f.va;
+          f.x += f.vx + Math.sin(f.a) * 0.5;
+          f.y += f.vy;
+          if (f.y > h) { f.y = -10; f.x = rand(0, w); }
+          ctx.beginPath();
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+          ctx.fillStyle = "white";
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      draw();
+    })();
+  </script>
+</body>
+</html>
